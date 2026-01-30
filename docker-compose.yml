@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  staats-web:
+    build: .
+    container_name: staats-python-web
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./output:/app/output
+      - ./temp:/app/temp
+    environment:
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+    restart: unless-stopped
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0
+
+networks:
+  default:
+    name: staats-network
