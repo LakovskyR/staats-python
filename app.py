@@ -25,7 +25,7 @@ from complete_demo import STAATSPipeline
 # Page config
 st.set_page_config(
     page_title="STAATS Python - aplusa",
-    page_icon="📊",
+    page_icon="assets/aplusa_logo.jpg",
     layout="wide"
 )
 
@@ -37,20 +37,23 @@ if 'data_loaded' not in st.session_state:
 if 'config_loaded' not in st.session_state:
     st.session_state.config_loaded = False
 
-# Sidebar
-st.sidebar.title("📊 STAATS Python")
-st.sidebar.markdown("**Market Research Data Processing**")
+# Sidebar with logo
+try:
+    st.sidebar.image("assets/aplusa_logo.jpg", use_column_width=True)
+except:
+    st.sidebar.title("STAATS Python")
+st.sidebar.markdown("**Healthcare Market Research - Worldwide**")
 st.sidebar.markdown("---")
 
 page = st.sidebar.radio(
     "Navigation",
-    ["🏠 Home", "📁 Load Data", "🗺️ Configure", "🔄 Recodes", "📊 Analyze", "💾 Export"]
+    ["Home", "Load Data", "Configure", "Recodes", "Analyze", "Export"]
 )
 
 # Main content
-if page == "🏠 Home":
-    st.title("Welcome to STAATS Python")
-    st.markdown("### Professional Survey Data Processing for aplusa")
+if page == "Home":
+    st.title("STAATS Python - Professional Survey Data Processing")
+    st.markdown("### For aplusa Healthcare Market Research")
     
     st.markdown("""
     **STAATS Python** replaces Excel VBA macros with modern Python - faster, more reliable, and cloud-ready.
@@ -63,25 +66,25 @@ if page == "🏠 Home":
     5. **Export** - Download formatted Excel files
     
     #### Features:
-    - ✅ Process unlimited rows (no more Excel crashes)
-    - ✅ 100x faster than Excel VBA
-    - ✅ Significance testing built-in
-    - ✅ Professional formatting
-    - ✅ Cloud-ready deployment
+    - Process unlimited rows (no more Excel crashes)
+    - 100x faster than Excel VBA
+    - Significance testing built-in
+    - Professional formatting
+    - Cloud-ready deployment
     """)
     
     # Quick stats
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("Data Loaded", "✅" if st.session_state.data_loaded else "❌")
+        st.metric("Data Loaded", "Yes" if st.session_state.data_loaded else "No")
     with col2:
-        st.metric("Config Ready", "✅" if st.session_state.config_loaded else "❌")
+        st.metric("Config Ready", "Yes" if st.session_state.config_loaded else "No")
     with col3:
         if st.session_state.data_loaded:
             st.metric("Respondents", len(st.session_state.pipeline.data))
 
-elif page == "📁 Load Data":
-    st.title("📁 Load Survey Data")
+elif page == "Load Data":
+    st.title("Load Survey Data")
     
     # File upload
     uploaded_file = st.file_uploader(
@@ -100,7 +103,7 @@ elif page == "📁 Load Data":
             st.session_state.pipeline.data = df
             st.session_state.data_loaded = True
             
-            st.success(f"✅ Loaded {len(df)} respondents with {len(df.columns)} columns")
+            st.success(f"Loaded {len(df)} respondents with {len(df.columns)} columns")
             
             # Preview
             st.markdown("### Data Preview")
@@ -121,10 +124,11 @@ elif page == "📁 Load Data":
     
     # Or use sample data
     st.markdown("---")
-    if st.button("📊 Load Sample Data (300 respondents)"):
+    st.markdown("**Test with Sample Data**")
+    if st.button("Load Sample Healthcare Survey (demo data)"):
         # Create sample data
         np.random.seed(42)
-        n = 300
+        n = 300  # Sample size for demo
         df = pd.DataFrame({
             'ID': range(1, n + 1),
             'Country': np.random.choice([1, 2, 3], n, p=[0.5, 0.3, 0.2]),
@@ -135,17 +139,17 @@ elif page == "📁 Load Data":
         
         st.session_state.pipeline.data = df
         st.session_state.data_loaded = True
-        st.success("✅ Sample data loaded!")
+        st.success("Sample data loaded successfully!")
         st.rerun()
 
-elif page == "🗺️ Configure":
-    st.title("🗺️ Data Configuration (Datamap)")
+elif page == "Configure":
+    st.title("Data Configuration (Datamap)")
     
     if not st.session_state.data_loaded:
-        st.warning("⚠️ Please load data first")
+        st.warning("Please load data first")
         st.stop()
     
-    tab1, tab2 = st.tabs(["📝 Manual Setup", "📂 Import Config"])
+    tab1, tab2 = st.tabs(["Manual Setup", "Import Config"])
     
     with tab1:
         st.markdown("### Define Questions")
@@ -156,7 +160,7 @@ elif page == "🗺️ Configure":
             st.session_state.datamap = DataMap()
         
         # Quick auto-detect
-        if st.button("🔍 Auto-Detect Question Types"):
+        if st.button("Auto-Detect Question Types"):
             dm = DataMap()
             for col in df.columns:
                 # Simple heuristic
@@ -181,7 +185,7 @@ elif page == "🗺️ Configure":
                 dm.add_question(Question(col, qtype, col, codes))
             
             st.session_state.datamap = dm
-            st.success(f"✅ Auto-detected {len(dm)} questions")
+            st.success(f"Auto-detected {len(dm)} questions")
             st.rerun()
         
         # Show current datamap
@@ -199,7 +203,7 @@ elif page == "🗺️ Configure":
             
             st.dataframe(pd.DataFrame(config_data))
             
-            if st.button("✅ Save Configuration"):
+            if st.button("Save Configuration"):
                 st.session_state.pipeline.datamap = st.session_state.datamap
                 st.session_state.config_loaded = True
                 st.success("Configuration saved!")
@@ -232,7 +236,7 @@ elif page == "🗺️ Configure":
                 st.session_state.config_loaded = True
                 
                 st.success(f"""
-                ✅ Configuration imported!
+                Configuration imported!
                 - Questions: {len(datamap)}
                 - Recodes: {len(recode_engine)}
                 - Filters: {len(filter_engine)}
@@ -245,17 +249,17 @@ elif page == "🗺️ Configure":
             except Exception as e:
                 st.error(f"Error importing config: {e}")
 
-elif page == "🔄 Recodes":
-    st.title("🔄 Recoded Variables")
+elif page == "Recodes":
+    st.title("Recoded Variables")
     
     if not st.session_state.config_loaded:
-        st.warning("⚠️ Please configure data first")
+        st.warning("Please configure data first")
         st.stop()
     
     st.markdown("### Create Recodes")
     
     # Simple recode builder
-    with st.expander("➕ Add New Recode"):
+    with st.expander("Add New Recode"):
         recode_name = st.text_input("Recode Name", "MyRecode")
         recode_type = st.selectbox(
             "Recode Type",
@@ -282,7 +286,7 @@ elif page == "🔄 Recodes":
                         {1: code1, 2: code2}
                     )
                     st.session_state.pipeline.recode_engine.add_recode(recode)
-                    st.success(f"✅ Recode '{recode_name}' added")
+                    st.success(f"Recode '{recode_name}' added")
                 except Exception as e:
                     st.error(f"Error: {e}")
     
@@ -300,19 +304,19 @@ elif page == "🔄 Recodes":
         
         st.dataframe(pd.DataFrame(recode_list))
         
-        if st.button("▶️ Calculate All Recodes"):
+        if st.button("Calculate All Recodes"):
             with st.spinner("Calculating recodes..."):
                 try:
                     st.session_state.pipeline.calculate_recodes()
-                    st.success(f"✅ Recodes calculated! Data now has {len(st.session_state.pipeline.data.columns)} columns")
+                    st.success(f"Recodes calculated! Data now has {len(st.session_state.pipeline.data.columns)} columns")
                 except Exception as e:
                     st.error(f"Error: {e}")
 
-elif page == "📊 Analyze":
-    st.title("📊 Cross-Tabulation Analysis")
+elif page == "Analyze":
+    st.title("Cross-Tabulation Analysis")
     
     if not st.session_state.config_loaded:
-        st.warning("⚠️ Please configure data first")
+        st.warning("Please configure data first")
         st.stop()
     
     st.markdown("### Create Cross-Tabulations")
@@ -324,7 +328,7 @@ elif page == "📊 Analyze":
         vars_list = []
     
     # Tab builder
-    with st.expander("➕ Add Cross-Tab"):
+    with st.expander("Add Cross-Tab"):
         tab_title = st.text_input("Tab Title", "My Cross-Tab")
         
         col1, col2 = st.columns(2)
@@ -339,7 +343,7 @@ elif page == "📊 Analyze":
         if st.button("Add to Analysis"):
             spec = TabDefinition(tab_title, row_var, col_var)
             st.session_state.tab_specs.append(spec)
-            st.success(f"✅ Added '{tab_title}'")
+            st.success(f"Added '{tab_title}'")
     
     # Show tab specs
     if 'tab_specs' in st.session_state and len(st.session_state.tab_specs) > 0:
@@ -348,7 +352,7 @@ elif page == "📊 Analyze":
         for i, spec in enumerate(st.session_state.tab_specs):
             st.markdown(f"{i+1}. **{spec.title}**: {spec.row_var} × {spec.col_var}")
         
-        if st.button("🚀 Generate Analysis"):
+        if st.button("Generate Analysis"):
             with st.spinner("Generating cross-tabulations..."):
                 try:
                     # Create tab engine
@@ -365,7 +369,7 @@ elif page == "📊 Analyze":
                     )
                     
                     st.session_state.tab_results = results
-                    st.success(f"✅ Generated {len(results)} cross-tabulations")
+                    st.success(f"Generated {len(results)} cross-tabulations")
                     
                     # Preview first tab
                     if results:
@@ -377,18 +381,18 @@ elif page == "📊 Analyze":
                     import traceback
                     st.code(traceback.format_exc())
 
-elif page == "💾 Export":
-    st.title("💾 Export Results")
+elif page == "Export":
+    st.title("Export Results")
     
     if 'tab_results' not in st.session_state:
-        st.warning("⚠️ Please generate analysis first")
+        st.warning("Please generate analysis first")
         st.stop()
     
     st.markdown("### Download Excel File")
     
     filename = st.text_input("Filename", "survey_analysis.xlsx")
     
-    if st.button("📥 Generate Excel File"):
+    if st.button("Generate Excel File"):
         with st.spinner("Creating Excel file..."):
             try:
                 # Create exporter
@@ -407,13 +411,13 @@ elif page == "💾 Export":
                     excel_data = f.read()
                 
                 st.download_button(
-                    label="📥 Download Excel File",
+                    label="Download Excel File",
                     data=excel_data,
                     file_name=filename,
                     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 )
                 
-                st.success("✅ Excel file ready for download!")
+                st.success("Excel file ready for download!")
                 
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -422,5 +426,3 @@ elif page == "💾 Export":
 st.sidebar.markdown("---")
 st.sidebar.markdown("**STAATS Python v1.0**")
 st.sidebar.markdown("Built for aplusa")
-st.sidebar.markdown("🔥 100x faster than Excel VBA")
-
