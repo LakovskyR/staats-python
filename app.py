@@ -423,3 +423,4 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("**STAATS Python v1.0**")
 st.sidebar.markdown("Built for aplusa")
 st.sidebar.markdown("🔥 100x faster than Excel VBA")
+
